@@ -6,8 +6,7 @@ public class NBody {
         String filename = args[2];
         double radius = readRadius(filename);
         Body[]bodies = readBodies(filename);
-        System.out.println(bodies[4].imgFileName);
-
+        
     }
     
     public static double readRadius(String file) {

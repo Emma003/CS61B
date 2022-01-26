@@ -15,7 +15,13 @@ public class LinkedListDeque {
     private int size;
 
     public LinkedListDeque() {
-        sentinel = new IntNode(sentinel, 63, sentinel.p);
+        sentinel = new IntNode(sentinel, 63, sentinel.previous);
         size = 0;
+    }
+
+    public static void main(String[] args) {
+        /* Creates a list of one integer, namely 10 */
+        //LinkedListDeque L = new LinkedListDeque();
+        System.out.println("hello");
     }
 }

@@ -80,8 +80,20 @@ public class IntList {
      */
 
     public static IntList dcatenate(IntList A, IntList B) {
-        //TODO:  fill in method
-        return null;
+        IntList p1 = A;
+        while (p1.rest != null) {
+            p1 = p1.rest;
+        }
+        p1.rest = B;
+        return A;
+    }
+
+    public static IntList dcatenateRecursive(IntList A, IntList B) {
+        if (A.rest == null) {
+            A.rest = B;
+            return A;
+        }
+        return dcatenateRecursive(A.rest, B);
     }
 
     /**
@@ -89,8 +101,27 @@ public class IntList {
      * * elements of B.  May NOT modify items of A.  Use 'new'.
      */
     public static IntList catenate(IntList A, IntList B) {
-        //TODO:  fill in method
-        return null;
+        IntList cloneA = new IntList(A.first, null);
+        IntList ptr = cloneA;
+        do {
+            A = A.rest;
+            ptr.rest = new IntList(A.first,null);
+            ptr = ptr.rest;
+        }
+        while (A.rest != null);
+        ptr.rest = new IntList(B.first, null);
+        do {
+            B = B.rest;
+            ptr = ptr.rest;
+            ptr.rest = new IntList(B.first,null);
+
+        }
+        while (B.rest != null);
+        return cloneA;
+    }
+
+    public static IntList catenateRecursive(IntList A, IntList B) {
+        return A;
     }
 
 
@@ -210,6 +241,12 @@ public class IntList {
         }
         out.format(")");
         return out.toString();
+    }
+
+    public static void main(String[]args) {
+        IntList A = IntList.of(1,2,3);
+        IntList B = IntList.of(4,5,6);
+        catenate(A,B);
     }
 }
 

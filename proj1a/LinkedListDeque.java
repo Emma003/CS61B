@@ -4,15 +4,15 @@
      * @param
      */
 
-    public class LinkedListDeque {
+    public class LinkedListDeque<Thing> {
 
         // Nested Node class
         private class Node {
-            private int item;
+            private Thing item;
             private Node next;
             private Node previous;
 
-            public Node(Node previous, int i, Node next) {
+            public Node(Node previous, Thing i, Node next) {
                 this.item = i;
                 this.previous = previous;
                 this.next = next;
@@ -24,7 +24,7 @@
 
         // Creates empty linked list deque
         public LinkedListDeque() {
-            sentinel = new Node(null, 999, null);
+            sentinel = new Node(null, null, null);
             sentinel.next = sentinel;
             sentinel.previous = sentinel;
             size = 0;
@@ -32,7 +32,7 @@
 
     // Adds an item of type int to the front of the deque.
     // Constant time
-    public void addFirst(int item) {
+    public void addFirst(Thing item) {
         if (size == 0) {
             sentinel.next = new Node(sentinel, item, sentinel);
             sentinel.previous = sentinel.next;
@@ -45,7 +45,7 @@
 
     // Adds an item of type int to the back of the deque.
     // Constant time
-    public void addLast(int item) {
+    public void addLast(Thing item) {
         if (size == 0) {
             sentinel.next = new Node(sentinel, item, sentinel);
             sentinel.previous = sentinel.next;
@@ -58,12 +58,12 @@
 
     // Removes and returns the item at the front of the deque. If no such item exists, returns null.
     // Constant time
-    public int removeFirst() {
+    public Thing removeFirst() {
         if (size == 0) {
-            return 0; // MAKE SURE TO RETURN NULL WHEN YOU CHANGE INT TO GENERIC TYPE
+            return null; // MAKE SURE TO RETURN NULL WHEN YOU CHANGE INT TO GENERIC TYPE
         }
 
-        int first = sentinel.next.item;
+        Thing first = sentinel.next.item;
         if (size == 1) {
             sentinel.next = sentinel;
             sentinel.previous = sentinel;
@@ -77,12 +77,12 @@
 
     // Removes and returns the item at the back of the deque. If no such item exists, returns null.
     // Constant time
-    public int removeLast() {
+    public Thing removeLast() {
         if (size == 0) {
-            return 0; // MAKE SURE TO RETURN NULL WHEN YOU CHANGE INT TO GENERIC TYPE
+            return null; // MAKE SURE TO RETURN NULL WHEN YOU CHANGE INT TO GENERIC TYPE
         }
 
-        int last = sentinel.previous.item;
+        Thing last = sentinel.previous.item;
         if (size == 1) {
             sentinel.next = sentinel;
             sentinel.previous = sentinel;
@@ -110,9 +110,9 @@
 
     // Gets the item at the given index. If no such item exists, returns null.
     // Uses iteration
-    public int get(int index) {
+    public Thing get(int index) {
         if (index >= size || size == 0) {
-            return 0; // MAKE SURE TO RETURN NULL WHEN YOU CHANGE INT TO GENERIC TYPE
+            return null; // MAKE SURE TO RETURN NULL WHEN YOU CHANGE INT TO GENERIC TYPE
         }
 
         Node p = sentinel.next;
@@ -124,16 +124,16 @@
 
     // Gets the item at the given index. If no such item exists, returns null.
     // Uses recursion
-    public int getRecursive(int index) {
+    public Thing getRecursive(int index) {
         if (index >= size || size == 0) {
-            return 0; // MAKE SURE TO RETURN NULL WHEN YOU CHANGE INT TO GENERIC TYPE
+            return null; // MAKE SURE TO RETURN NULL WHEN YOU CHANGE INT TO GENERIC TYPE
         }
         Node p = this.sentinel;
-        int element = this.getRecursiveHelper(p, index + 1); // Helper method
+        Thing element = this.getRecursiveHelper(p, index + 1); // Helper method
         return element;
     }
 
-    public int getRecursiveHelper(Node p, int index) {
+    public Thing getRecursiveHelper(Node p, int index) {
         if (index == 0) {
             return p.item;
         }
@@ -152,12 +152,12 @@
     }
 
     public static void main (String[]args) {
-        LinkedListDeque L = new LinkedListDeque();
-        L.addLast(20);
-        L.addLast(30);
-        L.addLast(90);
-        L.addLast(50);
-        int last = L.removeLast();
+        LinkedListDeque<String> L = new LinkedListDeque();
+        L.addLast("hello");
+        L.addLast("hi");
+        L.addLast("waddup");
+        L.addLast("yuhh");
+        String last = L.removeLast();
 
         System.out.println(L.getRecursive(2));
         L.printDeque();

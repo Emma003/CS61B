@@ -1,6 +1,6 @@
 package bearmaps;
 
-public class Point {
+public class Point implements Comparable<Point>{
 
     private double x;
     private double y;
@@ -55,6 +55,31 @@ public class Point {
 
     @Override
     public String toString() {
-        return String.format("Point x: %.10f, y: %.10f", x, y);
+        return String.format("Point x: %.3f, y: %.3f", x, y);
     }
+
+    public int compareTo(Point other) {
+        return 0;
+    }
+
+    public int compareX(Point other) {
+        if (this.x > other.x) {
+            return 1;
+        } else if (this.x < other.x) {
+            return -1;
+        } else {
+            return 0;
+        }
+    }
+
+    public int compareY(Point other) {
+        if (this.y > other.y) {
+            return 1;
+        } else if (this.y < other.y) {
+            return -1;
+        } else {
+            return 0;
+        }
+    }
+
 }

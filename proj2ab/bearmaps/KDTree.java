@@ -27,6 +27,10 @@ public class KDTree implements PointSet {
             this.depth = depth;
         }
 
+        public Point getPoint() {
+            return p;
+        }
+
         public Node getLeft() {
             return this.left;
         }
@@ -90,7 +94,22 @@ public class KDTree implements PointSet {
     }
 
     public Point nearest(double x, double y) {
-        return null;
+        Point goal = new Point(x,y);
+        Node found = nearest(root, goal, root);
+        return found.p;
     }
 
+    public Node nearest(Node n, Point goal, Node best) {
+        if (n == null) {
+            return best;
+        }
+
+        if (Point.distance(n.p, goal) < Point.distance(best.p, goal)) {
+            best = n;
+        }
+
+        best = nearest(n.left, goal, best);
+        best = nearest(n.right, goal, best);
+        return best;
+    }
 }

@@ -1,6 +1,7 @@
 package bearmaps;
 
 import edu.princeton.cs.algs4.StdRandom;
+import edu.princeton.cs.introcs.Stopwatch;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -9,21 +10,33 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 public class KDTreeTest {
-    public static void main (String[] args) {
-        Point A = new Point(2, 3); // constructs a Point with x = 2, y = 3
-        Point B = new Point(4, 2);
-        Point C = new Point(4, 5);
-        Point D = new Point(3,3);
-        Point E = new Point(1,5);
-        Point F = new Point(4,4);
+//    public static void main (String[] args) {
+//        Point A = new Point(2, 3); // constructs a Point with x = 2, y = 3
+//        Point B = new Point(4, 2);
+//        Point C = new Point(4, 5);
+//        Point D = new Point(3,3);
+//        Point E = new Point(1,5);
+//        Point F = new Point(4,4);
+//
+//        KDTree kd = new KDTree(List.of(A,B,C,D,E,F));
+//        NaivePointSet ns = new NaivePointSet(List.of(A,B,C,D,E,F));
+//        Point naiveFind = ns.nearest(0, 7); // returns p2
+//        Point kdFind = kd.nearest(0,7);
+//        System.out.println(naiveFind.toString());
+//        System.out.println(kdFind.toString());
 
-        KDTree kd = new KDTree(List.of(A,B,C,D,E,F));
-        NaivePointSet ns = new NaivePointSet(List.of(A,B,C,D,E,F));
-        Point naiveFind = ns.nearest(0, 7); // returns p2
-        Point kdFind = kd.nearest(0,7);
-        System.out.println(naiveFind.toString());
-        System.out.println(kdFind.toString());
-    }
+//        List<Point> points = new ArrayList<>();
+//        for (int i = 0; i < 100000; i++) {
+//            int randomX = StdRandom.uniform(-1000, 1000);
+//            int randomY = StdRandom.uniform(-1000, 1000);
+//            Point p = new Point(randomX, randomY);
+//            points.add(p);
+//        }
+//
+//        KDTree kd = new KDTree(points);
+//        NaivePointSet ns = new NaivePointSet(points);
+//        KDTreeTest.timingNearestTest(kd,ns);
+//    }
 
 
 
@@ -40,7 +53,6 @@ public class KDTreeTest {
 
         KDTree kd = new KDTree(points);
         NaivePointSet ns = new NaivePointSet(points);
-
         for (int i = 0; i < 300; i++) {
             int randomX = StdRandom.uniform(-1000, 1000);
             int randomY = StdRandom.uniform(-1000, 1000);
@@ -49,6 +61,38 @@ public class KDTreeTest {
             String error = "NaivePointSet found " + nsNearest.toString() + " to be the nearest point whereas KDTree found " + kdNearest.toString();
             assertEquals(error, nsNearest, kdNearest);
 
+        }
+    }
+
+
+    public static void timingNearestTest(KDTree kd, NaivePointSet ns) {
+        List<Integer> timingTest = new ArrayList<>();
+        List<Double> times = new ArrayList<>();
+        for (int x = 1000; x <= 10000 ;x += 1000) {
+
+            Stopwatch sw = new Stopwatch();
+            for (int y = x; y <= 2*x; y++) {
+                int randomX = StdRandom.uniform(-1000, 1000);
+                int randomY = StdRandom.uniform(-1000, 1000);
+                kd.nearest(randomX,randomY);
+            }
+
+            double timeInSeconds = sw.elapsedTime();
+            timingTest.add(x);
+            times.add(timeInSeconds);
+        }
+        //printTimingTable(timingTest,times,timingTest);
+    }
+
+    private static void printTimingTable(List<Integer> Ns, List<Double> times, List<Integer> opCounts) {
+        System.out.printf("%12s %12s %12s %12s\n", "N", "time (s)", "# ops", "microsec/op");
+        System.out.printf("------------------------------------------------------------\n");
+        for (int i = 0; i < Ns.size(); i += 1) {
+            int N = Ns.get(i);
+            double time = times.get(i);
+            int opCount = opCounts.get(i);
+            double timePerOp = time / opCount * 1e6;
+            System.out.printf("%12d %12.2f %12d %12.2f\n", N, time, opCount, timePerOp);
         }
     }
 }

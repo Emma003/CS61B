@@ -1,6 +1,6 @@
 package bearmaps;
 
-public class Point implements Comparable<Point>{
+public class Point {
 
     private double x;
     private double y;
@@ -58,8 +58,11 @@ public class Point implements Comparable<Point>{
         return String.format("Point x: %.3f, y: %.3f", x, y);
     }
 
-    public int compareTo(Point other) {
-        return 0;
+    public double compareBadSide(Point goal, int depth) {
+        if (depth == 0) {
+            return (goal.x - this.x) * (goal.x - this.x);
+        }
+        return (goal.y - this.y) * (goal.y - this.y);
     }
 
     public int compareX(Point other) {

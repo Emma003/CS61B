@@ -23,6 +23,14 @@ public class KDTree implements PointSet {
             }
         }
 
+        public int compareTo(Point other) {
+            if (this.depth % 2 == 0) {
+                return this.p.compareX(other);
+            } else {
+                return this.p.compareY(other);
+            }
+        }
+
         public void setDepth(int depth) {
             this.depth = depth;
         }
@@ -94,6 +102,7 @@ public class KDTree implements PointSet {
     }
 
     public Point nearest(double x, double y) {
+        //Node goal = new Node(new Point(x,y), null, null);
         Point goal = new Point(x,y);
         Node found = nearest(root, goal, root);
         return found.p;
@@ -104,12 +113,40 @@ public class KDTree implements PointSet {
             return best;
         }
 
+        // Update best node
         if (Point.distance(n.p, goal) < Point.distance(best.p, goal)) {
             best = n;
         }
 
-        best = nearest(n.left, goal, best);
-        best = nearest(n.right, goal, best);
+        Node goodSide, badSide;
+        // Goal is smaller than current node
+        if (n.compareTo(goal) > 0) {
+            goodSide = n.left;
+            badSide = n.right;
+        } else {
+            goodSide = n.right;
+            badSide = n.left;
+        }
+
+        best = nearest(goodSide, goal, best);
+        if (this.bestBadPoint(n, goal, best)) {
+            best = nearest(badSide, goal, best);
+        }
         return best;
+    }
+
+    // Returns the node in the bad side that could be potentially useful, if there aren't any, return null
+    public boolean bestBadPoint(Node curr, Point goal, Node best) {
+        double cmp;
+        if (curr.depth % 2 == 0) {
+            cmp = curr.p.compareBadSide(goal,0);
+        } else {
+            cmp = curr.p.compareBadSide(goal,1);
+        }
+
+        if (cmp < Point.distance(best.p, goal)) {
+            return true;
+        }
+        return false;
     }
 }

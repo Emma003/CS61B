@@ -10,33 +10,20 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 public class KDTreeTest {
-//    public static void main (String[] args) {
-//        Point A = new Point(2, 3); // constructs a Point with x = 2, y = 3
-//        Point B = new Point(4, 2);
-//        Point C = new Point(4, 5);
-//        Point D = new Point(3,3);
-//        Point E = new Point(1,5);
-//        Point F = new Point(4,4);
-//
-//        KDTree kd = new KDTree(List.of(A,B,C,D,E,F));
-//        NaivePointSet ns = new NaivePointSet(List.of(A,B,C,D,E,F));
-//        Point naiveFind = ns.nearest(0, 7); // returns p2
-//        Point kdFind = kd.nearest(0,7);
-//        System.out.println(naiveFind.toString());
-//        System.out.println(kdFind.toString());
+    public static void main (String[] args) {
 
-//        List<Point> points = new ArrayList<>();
-//        for (int i = 0; i < 100000; i++) {
-//            int randomX = StdRandom.uniform(-1000, 1000);
-//            int randomY = StdRandom.uniform(-1000, 1000);
-//            Point p = new Point(randomX, randomY);
-//            points.add(p);
-//        }
-//
-//        KDTree kd = new KDTree(points);
-//        NaivePointSet ns = new NaivePointSet(points);
-//        KDTreeTest.timingNearestTest(kd,ns);
-//    }
+        List<Point> points = new ArrayList<>();
+        for (int i = 0; i < 100000; i++) {
+            int randomX = StdRandom.uniform(-1000, 1000);
+            int randomY = StdRandom.uniform(-1000, 1000);
+            Point p = new Point(randomX, randomY);
+            points.add(p);
+        }
+
+        KDTree kd = new KDTree(points);
+        NaivePointSet ns = new NaivePointSet(points);
+        KDTreeTest.timingNearestTest(kd, ns);
+    }
 
 
 
@@ -81,7 +68,7 @@ public class KDTreeTest {
             timingTest.add(x);
             times.add(timeInSeconds);
         }
-        //printTimingTable(timingTest,times,timingTest);
+        printTimingTable(timingTest,times,timingTest);
     }
 
     private static void printTimingTable(List<Integer> Ns, List<Double> times, List<Integer> opCounts) {

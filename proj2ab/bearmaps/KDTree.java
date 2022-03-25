@@ -4,10 +4,10 @@ import java.util.List;
 public class KDTree implements PointSet {
     // Nested Node class
     private class Node implements Comparable<Node> {
-        private Point p;
-        private Node left;
-        private Node right;
-        private int depth;
+        Point p;
+        Node left;
+        Node right;
+        int depth;
 
         public Node (Point p, Node left, Node right) {
             this.p = p;
@@ -33,18 +33,6 @@ public class KDTree implements PointSet {
 
         public void setDepth(int depth) {
             this.depth = depth;
-        }
-
-        public Point getPoint() {
-            return p;
-        }
-
-        public Node getLeft() {
-            return this.left;
-        }
-
-        public Node getRight() {
-            return this.right;
         }
 
     }
@@ -95,10 +83,6 @@ public class KDTree implements PointSet {
         }
 
         return curr;
-    }
-
-    public int getSize() {
-        return size;
     }
 
     public Point nearest(double x, double y) {

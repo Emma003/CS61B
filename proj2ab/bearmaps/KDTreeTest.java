@@ -55,7 +55,7 @@ public class KDTreeTest {
     public static void timingNearestTest(KDTree kd, NaivePointSet ns) {
         List<Integer> timingTest = new ArrayList<>();
         List<Double> times = new ArrayList<>();
-        for (int x = 1000; x <= 10000 ;x += 1000) {
+        for (int x = 1000; x <= 2000000 ;x += x) {
 
             Stopwatch sw = new Stopwatch();
             for (int y = x; y <= 2*x; y++) {

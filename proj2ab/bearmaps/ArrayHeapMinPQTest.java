@@ -6,22 +6,6 @@ import static org.junit.Assert.assertTrue;
 
 public class ArrayHeapMinPQTest {
 
-    public static void main(String[] args) {
-        ArrayHeapMinPQ<String> heap = new ArrayHeapMinPQ();
-
-        heap.add("w", 6);
-        heap.add("a", 2);
-        heap.add("i", 4);
-        heap.add("v", 5);
-        heap.add("e", 1);
-        heap.add("r", 3);
-
-        heap.changePriority("w", 1.5);
-        System.out.println(heap.getSmallest());
-        heap.removeSmallest();
-        heap.getSmallest();
-    }
-
     @Test
     public void getSmallestTest() {
         NaiveMinPQ<String> naive = new NaiveMinPQ();
@@ -121,14 +105,17 @@ public class ArrayHeapMinPQTest {
 
         assertEquals(naive.getSmallest(), heap.getSmallest());
         naive.changePriority("w", 1.5);
-        naive.changePriority("w", 1.5);
+        heap.changePriority("w", 1.5);
         assertEquals(naive.getSmallest(), heap.getSmallest());
         naive.removeSmallest();
         heap.removeSmallest();
         assertEquals(naive.contains("e"), heap.contains("e"));
         assertEquals(naive.getSmallest(), heap.getSmallest());
-        naive.changePriority("w", 4.5);
-        naive.changePriority("w", 4.5);
+        naive.changePriority("w", 0.5);
+        heap.changePriority("w", 0.5);
+        assertEquals(naive.getSmallest(), heap.getSmallest());
+        naive.changePriority("w", 6.5);
+        heap.changePriority("w", 6.5);
         assertEquals(naive.getSmallest(), heap.getSmallest());
     }
 }

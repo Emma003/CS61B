@@ -39,10 +39,9 @@ public class IntList {
 
     // Returns IntList identical to L, but with values incremented by x, values in L cannot change
     public static IntList incrList(IntList L, int x) {
-        int sizeOfL = L.size();
-        IntList Q = new IntList(L.iterativeGet(sizeOfL -1) + x, null);
+        IntList Q = new IntList(L.iterativeGet(L.size() -1) + x, null);
 
-        for (int i = sizeOfL -2; i >= 0; i--) {
+        for (int i = L.size() -2; i >= 0; i--) {
             Q = new IntList(L.get(i) + x, Q);
         }
         return Q;

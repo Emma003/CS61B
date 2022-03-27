@@ -1,8 +1,6 @@
 package bearmaps;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
 
@@ -61,10 +59,12 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
 
     private List<PriorityNode> minHeap;
     private int size;
+    private Map<PriorityNode, Integer> itemMap;
 
     public ArrayHeapMinPQ() {
         this.minHeap = new ArrayList<>();
-        PriorityNode sentinel = new PriorityNode(null, 0);
+        this.itemMap = new HashMap<>();
+        PriorityNode sentinel = new PriorityNode(null, -1);
         this.minHeap.add(sentinel);
         this. size = 0;
     }
@@ -81,6 +81,7 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
         PriorityNode newNode = new PriorityNode(item,priority);
         size++;
         minHeap.add(newNode);
+        itemMap.put(newNode, size);
         swim(size);
 
     }
@@ -88,10 +89,11 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
 
     /* Returns true if the PQ contains the given item. */
     public boolean contains(T item) {
-        if (size == 0) {
-            return false;
-        }
-        return false;
+        PriorityNode search = new PriorityNode(item, 1);
+//        if (size == 0) {
+//            return false;
+//        }
+        return itemMap.containsKey(search);
     }
 
     /* Returns item in the root node */
@@ -108,6 +110,7 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
             throw new NoSuchElementException("The heap is empty!");
         }
         T smallest = (T) minHeap.get(1).getItem();
+        PriorityNode smallestNode = new PriorityNode(smallest, 0);
 
         if (size == 1) {
             minHeap.remove(1);
@@ -119,6 +122,7 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
         minHeap.remove(size);
         sink(1);
         size--;
+        itemMap.remove(smallestNode);
         return smallest;
     }
 
@@ -130,15 +134,33 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
     /* Changes the priority of the given item. Throws NoSuchElementException if the item
      * doesn't exist. */
     public void changePriority(T item, double priority) {
+        if (!contains(item)) {
+            throw new NoSuchElementException("This item is not in the heap!");
+        }
 
+        PriorityNode changedNode = new PriorityNode(item,priority);
+        int currIndex = itemMap.get(changedNode);
+        minHeap.get(currIndex).setPriority(priority);
+
+        // Swim up if parent is bigger than current, otherwise sink
+        if (changedNode.compareTo(parent(currIndex)) < 0) {
+            swim(currIndex);
+        } else {
+            sink(currIndex);
+        }
     }
 
     /** Helper method that swaps two elements in the heap
      */
     void swap(int from, int to) {
+        PriorityNode fromNode = minHeap.get(from);
         PriorityNode toNode = minHeap.get(to);
-        minHeap.set(to, minHeap.get(from));
+        minHeap.set(to, fromNode);
         minHeap.set(from, toNode);
+
+        // Changing indexes in the mapping hashmap
+        itemMap.put(fromNode, to);
+        itemMap.put(toNode, from);
     }
 
     /** Helper method that sinks an elements until heap order had been restored

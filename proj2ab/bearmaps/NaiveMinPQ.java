@@ -12,6 +12,53 @@ import java.util.NoSuchElementException;
  *  point where this class is very difficult to use for testing.
  *  @author Matt Owen @since 03-11-19 */
 public class NaiveMinPQ<T> implements ExtrinsicMinPQ<T> {
+    private class PriorityNode implements Comparable<PriorityNode> {
+        private T item;
+        private double priority;
+
+        PriorityNode(T e, double p) {
+            this.item = e;
+            this.priority = p;
+        }
+
+        T getItem() {
+            return item;
+        }
+
+        double getPriority() {
+            return priority;
+        }
+
+        void setPriority(double priority) {
+            this.priority = priority;
+        }
+
+        @Override
+        public int compareTo(PriorityNode other) {
+            if (other == null) {
+                return -1;
+            }
+            return Double.compare(this.getPriority(), other.getPriority());
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public boolean equals(Object o) {
+            if (o == null || o.getClass() != this.getClass()) {
+                return false;
+            } else {
+                return ((PriorityNode) o).getItem().equals(getItem());
+            }
+        }
+
+        @Override
+        public int hashCode() {
+            return item.hashCode();
+        }
+
+
+
+    }
 
     private ArrayList<PriorityNode> items;
 
@@ -67,48 +114,5 @@ public class NaiveMinPQ<T> implements ExtrinsicMinPQ<T> {
         return items.indexOf(new PriorityNode(elem, 0));
     }
 
-    private class PriorityNode implements Comparable<PriorityNode> {
-        private T item;
-        private double priority;
 
-        PriorityNode(T e, double p) {
-            this.item = e;
-            this.priority = p;
-        }
-
-        T getItem() {
-            return item;
-        }
-
-        double getPriority() {
-            return priority;
-        }
-
-        void setPriority(double priority) {
-            this.priority = priority;
-        }
-
-        @Override
-        public int compareTo(PriorityNode other) {
-            if (other == null) {
-                return -1;
-            }
-            return Double.compare(this.getPriority(), other.getPriority());
-        }
-
-        @Override
-        @SuppressWarnings("unchecked")
-        public boolean equals(Object o) {
-            if (o == null || o.getClass() != this.getClass()) {
-                return false;
-            } else {
-                return ((PriorityNode) o).getItem().equals(getItem());
-            }
-        }
-
-        @Override
-        public int hashCode() {
-            return item.hashCode();
-        }
-    }
 }

@@ -70,10 +70,6 @@ public class AStarSolver<Vertex> implements ShortestPathsSolver<Vertex> {
             Vertex v = fringe.removeSmallest();
             this.numStatesExplored++;
 
-
-            /**
-             * TODO: there's a slight logical issue with setting the distTo values as inf, FIX IT!!
-             */
             // Relax all edges from current vertex
             for (WeightedEdge<Vertex> e : input.neighbors(v)) {
                 Vertex from = e.from();

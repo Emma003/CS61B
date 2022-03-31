@@ -1,4 +1,4 @@
-package bearmaps.proj2ab;
+package bearmaps.proj2c;
 
 
 import java.util.HashMap;

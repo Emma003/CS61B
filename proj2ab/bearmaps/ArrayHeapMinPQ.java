@@ -48,13 +48,6 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
             return item.hashCode();
         }
 
-        @Override
-        public String toString() {
-            return "PriorityNode{" +
-                    "item=" + item +
-                    ", priority=" + priority +
-                    '}';
-        }
     }
 
     private List<PriorityNode> minHeap;
@@ -87,16 +80,13 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
     }
 
 
-    /* Returns true if the PQ contains the given item. */
+    /** Returns true if the PQ contains the given item. */
     public boolean contains(T item) {
         PriorityNode search = new PriorityNode(item, 1);
-//        if (size == 0) {
-//            return false;
-//        }
         return itemMap.containsKey(search);
     }
 
-    /* Returns item in the root node */
+    /** Returns item in the root node */
     public T getSmallest() {
         if (size == 0) {
             throw new NoSuchElementException("The heap is empty!");
@@ -104,7 +94,7 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
         return (T) minHeap.get(1).getItem();
     }
 
-    /* Removes and returns the minimum item. Throws NoSuchElementException if the PQ is empty. */
+    /** Removes and returns the minimum item. Throws NoSuchElementException if the PQ is empty. */
     public T removeSmallest() {
         if (size == 0) {
             throw new NoSuchElementException("The heap is empty!");
@@ -126,12 +116,12 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
         return smallest;
     }
 
-    /* Returns the number of items in the PQ. */
+    /** Returns the number of items in the PQ. */
     public int size() {
         return size;
     }
 
-    /* Changes the priority of the given item. Throws NoSuchElementException if the item
+    /** Changes the priority of the given item. Throws NoSuchElementException if the item
      * doesn't exist. */
     public void changePriority(T item, double priority) {
         if (!contains(item)) {
@@ -163,7 +153,7 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
         itemMap.put(toNode, from);
     }
 
-    /** Helper method that sinks an elements until heap order had been restored
+    /** Helper method that sinks an element until heap order had been restored
      */
     void sink(int currIndex) {
         PriorityNode curr = minHeap.get(currIndex);

@@ -40,6 +40,7 @@ public class LazySolver<Vertex> implements ShortestPathsSolver<Vertex> {
 
     @Override
     public List<Vertex> solution() {
+
         return solution;
     }
 

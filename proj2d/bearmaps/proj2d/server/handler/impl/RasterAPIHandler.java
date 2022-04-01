@@ -12,10 +12,8 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.Base64;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 import static bearmaps.proj2d.utils.Constants.SEMANTIC_STREET_GRAPH;
 import static bearmaps.proj2d.utils.Constants.ROUTE_LIST;
@@ -84,12 +82,188 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
      */
     @Override
     public Map<String, Object> processRequest(Map<String, Double> requestParams, Response response) {
-        //System.out.println("yo, wanna know the parameters given by the web browser? They are:");
-        //System.out.println(requestParams);
+        System.out.println("yo, wanna know the parameters given by the web browser? They are:");
+        System.out.println(requestParams);
         Map<String, Object> results = new HashMap<>();
+
+        // "ullat", "ullon", "lrlat", "lrlon", "w", "h";
+        double ullat = requestParams.get("ullat");
+        double ullon = requestParams.get("ullon");
+        double lrlat = requestParams.get("lrlat");
+        double lrlon = requestParams.get("lrlon");
+        double width = requestParams.get("w");
+
+        //Corner Case 2: No Coverage,  ensure query_success is set to false.
+        if (lrlon < Constants.ROOT_ULLON || Constants.ROOT_LRLON < ullon
+                || lrlat > Constants.ROOT_ULLAT || ullat < Constants.ROOT_LRLAT
+                || ullon >= lrlon || ullat <= lrlat) {
+            results.put(REQUIRED_RASTER_RESULT_PARAMS[6], false);
+            return results;
+        }
+
+
+//        double ullon = -122.2998046875;
+//        double lrlon = -122.2119140625;
+//        double lrlat = 37.82280243352756;
+//        double ullat = 37.892195547244356;
+        int depth = this.getDepth(lrlon, ullon, width);
+        boolean success = true;
+        String [][] img;
+
         System.out.println("Since you haven't implemented RasterAPIHandler.processRequest, nothing is displayed in "
-                + "your browser.");
+                + "your browser." + " THIS IS THE DEPTH " + depth);
+
+        List<Integer> lons = getX(lrlon, ullon, depth, results);
+        List<Integer> lats = getY(lrlat, ullat, depth, results);
+
+        System.out.println("lons length " + lons.size() + " lats length " + lats.size());
+
+        for (int i = 0; i < lats.size(); i++) {
+            System.out.println("lats " + i + ": " + lats.get(i));
+        }
+
+        for (int j = 0; j < lons.size(); j++) {
+            System.out.println("lons " + j + ": " + lons.get(j));
+        }
+
+
+        if (depth == 0) {
+            img = new String[1][1];
+            img [0][0]= "d0_x0_y0.png";
+        } else {
+            img = getImages(lons, lats, depth);
+            //img = getGridFileNames(int ulXNum, int ulYNum, int lrXNum, int lrYNum, int depth);
+        }
+
+
+        //String [][] images = {{"d1_x0_y0.png", "d1_x1_y0.png"}, {"d1_x0_y1.png", "d1_x1_y1.png"}};
+        results.put("render_grid", img);
+//        results.put("raster_ul_lon", ullon);
+//        results.put("raster_ul_lat", ullat);
+//        results.put("raster_lr_lon", lrlon);
+//        results.put("raster_lr_lat", lrlat);
+        results.put("depth", depth);
+        results.put("query_success", success);
+
+
+        /**
+         * TODO: figure out the correct depth for the query
+         * compute bounding box for
+         * figure out how many tiles you'll need
+         *
+         */
+
+
+
+
         return results;
+    }
+
+    private int getDepth(double lrlon, double ullon, double width) {
+        double LonDPP = (lrlon - ullon) / width;
+        int depth;
+
+        if (LonDPP >= 0.000343322753906){
+            depth = 0;
+        } else if (LonDPP >= 0.000171661376) {
+            depth = 1;
+        } else if (LonDPP >= 0.00008583068847) {
+            depth = 2;
+        } else if (LonDPP >= 0.000042915344) {
+            depth = 3;
+        } else if (LonDPP >= 0.000021457672) {
+            depth = 4;
+        } else if (LonDPP >= 0.00001072883606) {
+            depth = 5;
+        } else if (LonDPP >= 0.00000536441803) {
+            depth = 6;
+        } else {
+            depth = 7;
+        }
+
+        return depth;
+    }
+
+    private List<Integer> getX(double lrlon, double ullon, int depth, Map<String, Object> results) {
+        List<Integer> lons = new ArrayList<>();
+
+        double bucketRange = (Constants.ROOT_LRLON - Constants.ROOT_ULLON) / Math.pow(2, depth);
+        System.out.println("bRange: " + bucketRange);
+
+        int xLeft = (int) Math.abs((Constants.ROOT_ULLON - ullon)/bucketRange);
+        System.out.println("xL: " + xLeft);
+        double bound_ullon = Constants.ROOT_ULLON + (xLeft * bucketRange);
+        System.out.println("bound ullon: " + bound_ullon);
+        results.put("raster_ul_lon", bound_ullon);
+
+
+        int xRight = (int) Math.abs(Math.ceil((Constants.ROOT_ULLON - lrlon)/bucketRange));
+        System.out.println("xR: " + xRight);
+        double bound_lrlon = Constants.ROOT_ULLON + (xRight * bucketRange);
+        System.out.println("bound lrlon: " + bound_lrlon);
+        results.put("raster_lr_lon", bound_lrlon);
+
+        for (int i = xLeft; i < xRight; i++) {
+            lons.add(i);
+        }
+
+        return lons;
+    }
+
+    private List<Integer> getY(double lrlat, double ullat, int depth, Map<String, Object> results) {
+        List<Integer> lats = new ArrayList<>();
+
+        double bucketRange = (Constants.ROOT_ULLAT - Constants.ROOT_LRLAT) / Math.pow(2, depth);
+        System.out.println("bRange: " + bucketRange);
+
+        int xUp = (int) Math.abs((Constants.ROOT_ULLAT - ullat)/bucketRange);
+        System.out.println("xup: " + xUp);
+        double bound_ullat = Constants.ROOT_ULLAT - (xUp * bucketRange);
+        System.out.println("bound ullat: " + bound_ullat);
+        results.put("raster_ul_lat", bound_ullat);
+
+        int xDown = (int) Math.abs(Math.ceil((Constants.ROOT_ULLAT - lrlat)/bucketRange));
+        System.out.println("xdown: " + xDown);
+        double bound_lrlat = Constants.ROOT_ULLAT - (xDown * bucketRange);
+        System.out.println("bound lrlat: " + bound_lrlat);
+        results.put("raster_lr_lat", bound_lrlat);
+
+        for (int i = xUp; i < xDown; i++) {
+            lats.add(i);
+        }
+
+        return lats;
+    }
+
+    public String[][] getImages(List<Integer> lons, List<Integer> lats, int depth) {
+        String strDepth = Integer.toString(depth);
+        String[][] images = new String[lons.size()][lats.size()];
+
+        for (int i = 0; i < lats.size(); i++) {
+            for (int j = 0; j < lons.size(); j++) {
+                String lon = Integer.toString(lons.get(j));
+                String lat = Integer.toString(lats.get(i));
+                images[i][j] = "d" + strDepth + "_x" + lon + "_y" + lat + ".png";
+            }
+        }
+
+        return images;
+    }
+
+    /** Get filenames grid. */
+    private String[][] getGridFileNames(int ulXNum, int ulYNum, int lrXNum, int lrYNum, int depth) {
+        int Length = (int) (Math.pow(2, depth) - 1);
+        int viewWidth = Length - lrXNum -ulXNum + 1;
+        int viewHeight = Length - lrYNum - ulYNum + 1;
+
+        String[][] grid = new String[viewHeight][viewWidth];
+        for (int i = 0; i < viewHeight; i++) {
+            for (int j = 0; j < viewWidth; j++) {
+                grid[i][j] = String.format("d%d_x%d_y%d.png", depth, j + ulXNum, i + ulYNum);
+            }
+        }
+
+        return grid;
     }
 
     @Override

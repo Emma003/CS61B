@@ -101,11 +101,6 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
             return results;
         }
 
-
-//        double ullon = -122.2998046875;
-//        double lrlon = -122.2119140625;
-//        double lrlat = 37.82280243352756;
-//        double ullat = 37.892195547244356;
         int depth = this.getDepth(lrlon, ullon, width);
         boolean success = true;
         String [][] img;
@@ -136,25 +131,9 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
         }
 
 
-        //String [][] images = {{"d1_x0_y0.png", "d1_x1_y0.png"}, {"d1_x0_y1.png", "d1_x1_y1.png"}};
         results.put("render_grid", img);
-//        results.put("raster_ul_lon", ullon);
-//        results.put("raster_ul_lat", ullat);
-//        results.put("raster_lr_lon", lrlon);
-//        results.put("raster_lr_lat", lrlat);
         results.put("depth", depth);
         results.put("query_success", success);
-
-
-        /**
-         * TODO: figure out the correct depth for the query
-         * compute bounding box for
-         * figure out how many tiles you'll need
-         *
-         */
-
-
-
 
         return results;
     }
@@ -237,7 +216,7 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
 
     public String[][] getImages(List<Integer> lons, List<Integer> lats, int depth) {
         String strDepth = Integer.toString(depth);
-        String[][] images = new String[lons.size()][lats.size()];
+        String[][] images = new String[lats.size()][lons.size()];
 
         for (int i = 0; i < lats.size(); i++) {
             for (int j = 0; j < lons.size(); j++) {
@@ -248,22 +227,6 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
         }
 
         return images;
-    }
-
-    /** Get filenames grid. */
-    private String[][] getGridFileNames(int ulXNum, int ulYNum, int lrXNum, int lrYNum, int depth) {
-        int Length = (int) (Math.pow(2, depth) - 1);
-        int viewWidth = Length - lrXNum -ulXNum + 1;
-        int viewHeight = Length - lrYNum - ulYNum + 1;
-
-        String[][] grid = new String[viewHeight][viewWidth];
-        for (int i = 0; i < viewHeight; i++) {
-            for (int j = 0; j < viewWidth; j++) {
-                grid[i][j] = String.format("d%d_x%d_y%d.png", depth, j + ulXNum, i + ulYNum);
-            }
-        }
-
-        return grid;
     }
 
     @Override

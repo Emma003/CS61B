@@ -82,8 +82,8 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
      */
     @Override
     public Map<String, Object> processRequest(Map<String, Double> requestParams, Response response) {
-        System.out.println("yo, wanna know the parameters given by the web browser? They are:");
-        System.out.println(requestParams);
+//        System.out.println("yo, wanna know the parameters given by the web browser? They are:");
+//        System.out.println(requestParams);
         Map<String, Object> results = new HashMap<>();
 
         // "ullat", "ullon", "lrlat", "lrlon", "w", "h";
@@ -105,21 +105,21 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
         boolean success = true;
         String [][] img;
 
-        System.out.println("Since you haven't implemented RasterAPIHandler.processRequest, nothing is displayed in "
-                + "your browser." + " THIS IS THE DEPTH " + depth);
+        //System.out.println("Since you haven't implemented RasterAPIHandler.processRequest, nothing is displayed in "
+        //        + "your browser." + " THIS IS THE DEPTH " + depth);
 
         List<Integer> lons = getX(lrlon, ullon, depth, results);
         List<Integer> lats = getY(lrlat, ullat, depth, results);
 
-        System.out.println("lons length " + lons.size() + " lats length " + lats.size());
-
-        for (int i = 0; i < lats.size(); i++) {
-            System.out.println("lats " + i + ": " + lats.get(i));
-        }
-
-        for (int j = 0; j < lons.size(); j++) {
-            System.out.println("lons " + j + ": " + lons.get(j));
-        }
+//        System.out.println("lons length " + lons.size() + " lats length " + lats.size());
+//
+//        for (int i = 0; i < lats.size(); i++) {
+//            System.out.println("lats " + i + ": " + lats.get(i));
+//        }
+//
+//        for (int j = 0; j < lons.size(); j++) {
+//            System.out.println("lons " + j + ": " + lons.get(j));
+//        }
 
 
         if (depth == 0) {
@@ -127,7 +127,6 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
             img [0][0]= "d0_x0_y0.png";
         } else {
             img = getImages(lons, lats, depth);
-            //img = getGridFileNames(int ulXNum, int ulYNum, int lrXNum, int lrYNum, int depth);
         }
 
 
@@ -167,22 +166,22 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
         List<Integer> lons = new ArrayList<>();
 
         double bucketRange = (Constants.ROOT_LRLON - Constants.ROOT_ULLON) / Math.pow(2, depth);
-        System.out.println("bRange: " + bucketRange);
+        //System.out.println("bRange: " + bucketRange);
 
         int xLeft = (int) Math.abs((Constants.ROOT_ULLON - ullon)/bucketRange);
-        System.out.println("xL: " + xLeft);
+        //System.out.println("xL: " + xLeft);
         double bound_ullon = Constants.ROOT_ULLON + (xLeft * bucketRange);
-        System.out.println("bound ullon: " + bound_ullon);
+        //System.out.println("bound ullon: " + bound_ullon);
         results.put("raster_ul_lon", bound_ullon);
 
 
         int xRight = (int) Math.abs(Math.ceil((Constants.ROOT_ULLON - lrlon)/bucketRange));
-        System.out.println("xR: " + xRight);
-        double bound_lrlon = Constants.ROOT_ULLON + (xRight * bucketRange);
-        System.out.println("bound lrlon: " + bound_lrlon);
+        //System.out.println("xR: " + xRight);
+        double bound_lrlon = Constants.ROOT_ULLON + ((xRight+1) * bucketRange);
+        //System.out.println("bound lrlon: " + bound_lrlon);
         results.put("raster_lr_lon", bound_lrlon);
 
-        for (int i = xLeft; i < xRight; i++) {
+        for (int i = xLeft; i <= xRight; i++) {
             lons.add(i);
         }
 
@@ -193,18 +192,18 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
         List<Integer> lats = new ArrayList<>();
 
         double bucketRange = (Constants.ROOT_ULLAT - Constants.ROOT_LRLAT) / Math.pow(2, depth);
-        System.out.println("bRange: " + bucketRange);
+        //System.out.println("bRange: " + bucketRange);
 
         int xUp = (int) Math.abs((Constants.ROOT_ULLAT - ullat)/bucketRange);
-        System.out.println("xup: " + xUp);
+        //System.out.println("xup: " + xUp);
         double bound_ullat = Constants.ROOT_ULLAT - (xUp * bucketRange);
-        System.out.println("bound ullat: " + bound_ullat);
+        //System.out.println("bound ullat: " + bound_ullat);
         results.put("raster_ul_lat", bound_ullat);
 
         int xDown = (int) Math.abs(Math.ceil((Constants.ROOT_ULLAT - lrlat)/bucketRange));
-        System.out.println("xdown: " + xDown);
+        //System.out.println("xdown: " + xDown);
         double bound_lrlat = Constants.ROOT_ULLAT - (xDown * bucketRange);
-        System.out.println("bound lrlat: " + bound_lrlat);
+        //System.out.println("bound lrlat: " + bound_lrlat);
         results.put("raster_lr_lat", bound_lrlat);
 
         for (int i = xUp; i < xDown; i++) {
@@ -228,6 +227,75 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
 
         return images;
     }
+
+//    @Override
+//    public Map<String, Object> processRequest(Map<String, Double> requestParams, Response response) {
+////        System.out.println("yo, wanna know the parameters given by the web browser? They are:");
+////        System.out.println(requestParams);
+//        Map<String, Object> results = new HashMap<>();
+////        System.out.println("Since you haven't implemented RasterAPIHandler.processRequest, nothing is displayed in "
+////                + "your browser.");
+//        double lrlon = requestParams.get("lrlon");
+//        double ullon = requestParams.get("ullon");
+//        double width = requestParams.get("w");
+//        double ullat = requestParams.get("ullat");
+//        double lrlat = requestParams.get("lrlat");
+//
+//        if (Constants.ROOT_LRLON < ullon || Constants.ROOT_LRLAT > ullat
+//                || Constants.ROOT_ULLON > lrlon || Constants.ROOT_ULLAT < lrlat
+//                || lrlon < ullon || ullat < lrlat) {
+//            results.put("query_success", false);
+//            return results;
+//        }
+//
+//        int depth = getImageDepth(ullon, lrlon, width);
+//
+//        double lonDistPerTile = (Constants.ROOT_LRLON - Constants.ROOT_ULLON) / Math.pow(2, depth);
+//        double latDistPerTile = (Constants.ROOT_ULLAT - Constants.ROOT_LRLAT) / Math.pow(2, depth);
+//        int ulX = (int) Math.abs((ullon - Constants.ROOT_ULLON) / lonDistPerTile);
+//        int ulY = (int) Math.abs((ullat - Constants.ROOT_ULLAT) / latDistPerTile);
+//        int lrX = (int) Math.abs((lrlon - Constants.ROOT_ULLON) / lonDistPerTile);
+//        int lrY = (int) Math.abs((lrlat - Constants.ROOT_ULLAT) / latDistPerTile);
+//
+//        String[][] renderGrid = new String[lrY - ulY + 1][lrX - ulX + 1];
+//        for (int i = 0; i <= lrY - ulY; i += 1) {
+//            for (int j = 0; j <= lrX - ulX; j += 1) {
+//                renderGrid[i][j] = "d" + depth + "_x" + (ulX + j) + "_y" + (ulY + i) + ".png";
+//            }
+//        }
+//
+//        double rasterUllon = Constants.ROOT_ULLON + ulX * lonDistPerTile;
+//        double rasterUllat = Constants.ROOT_ULLAT - ulY * latDistPerTile;
+//        double rasterLrlon = Constants.ROOT_ULLON + (lrX + 1) * lonDistPerTile;
+//        double rasterLrlat = Constants.ROOT_ULLAT - (lrY + 1) * latDistPerTile;
+//
+//        results.put("raster_ul_lon", rasterUllon);
+//        results.put("raster_ul_lat", rasterUllat);
+//        results.put("raster_lr_lon", rasterLrlon);
+//        results.put("raster_lr_lat", rasterLrlat);
+//        results.put("render_grid", renderGrid);
+//        results.put("depth", depth);
+//        results.put("query_success", true);
+//
+//        return results;
+//    }
+//
+//    private int getImageDepth(double ullon, double lrlon, double width) {
+//        double maxLonDPP = lonDPP(lrlon, ullon, width);
+//        int depth = 0;
+//        double lonDPP = (Constants.ROOT_LRLON - Constants.ROOT_ULLON) / Constants.TILE_SIZE;
+//        while (lonDPP > maxLonDPP && depth < 7) {
+//            depth += 1;
+//            lonDPP /= 2;
+//        }
+//        return depth;
+//    }
+//
+//    private double lonDPP(double lrlon, double ullon, double width) {
+//        return (lrlon - ullon) / width;
+//    }
+
+
 
     @Override
     protected Object buildJsonResponse(Map<String, Object> result) {
@@ -342,8 +410,8 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
         BufferedImage tileImg = null;
         if (tileImg == null) {
             try {
-                File in = new File(imgPath);
-                tileImg = ImageIO.read(in);
+//                File in = new File(imgPath);
+                tileImg = ImageIO.read(Thread.currentThread().getContextClassLoader().getResource(imgPath));
             } catch (IOException | NullPointerException e) {
                 e.printStackTrace();
             }

@@ -1,25 +1,54 @@
 package bearmaps.proj2d;
 
+import bearmaps.proj2ab.Point;
+import bearmaps.proj2ab.TrieSet;
+import bearmaps.proj2ab.WeirdPointSet;
+import bearmaps.proj2c.WeirdSolver;
 import bearmaps.proj2c.streetmap.StreetMapGraph;
 import bearmaps.proj2c.streetmap.Node;
+import org.eclipse.jetty.util.Trie;
 
-import java.util.List;
-import java.util.Map;
-import java.util.LinkedList;
+import java.util.*;
 
-/**
- * An augmented graph that is more powerful that a standard StreetMapGraph.
- * Specifically, it supports the following additional operations:
- *
- *
- * @author Alan Yao, Josh Hug, ________
- */
 public class AugmentedStreetMapGraph extends StreetMapGraph {
-
+    private List<Node> nodes;
+    private HashMap<Point, Node> pointNodeHashMap;
+    private WeirdPointSet pointSet;
+    private TrieSet trieSet;
+    private HashMap<String, Node> stringToNodeHashMap;
+    private HashMap<String, HashSet<String>> cleanNameToDirtyNames;
+    private HashMap<String, Node> cleanNameToNode;
     public AugmentedStreetMapGraph(String dbPath) {
         super(dbPath);
-        // You might find it helpful to uncomment the line below:
-        // List<Node> nodes = this.getNodes();
+        nodes = this.getNodes();
+        pointNodeHashMap = new HashMap<Point, Node>();
+        List<Point> points = new ArrayList<Point> ();
+        trieSet = new TrieSet();
+        stringToNodeHashMap = new HashMap<String, Node>();
+        cleanNameToDirtyNames = new HashMap<String, HashSet<String>>();
+        cleanNameToNode = new HashMap<String, Node>();
+        for (Node a : nodes) {
+            if (!neighbors(a.id()).isEmpty()) {
+                pointNodeHashMap.put(new Point(a.lon(), a.lat()), a);
+                points.add(new Point(a.lon(), a.lat()));
+            }
+            if (a.name() != null) {
+                stringToNodeHashMap.put(a.name(), a);
+                if (cleanNameToDirtyNames.containsKey(cleanString(a.name()))) {
+                    cleanNameToDirtyNames.get(cleanString(a.name())).add(a.name());
+                    cleanNameToNode.put(cleanString(a.name()), a);
+                } else {
+                    HashSet<String> temp = new HashSet<String>();
+                    cleanNameToDirtyNames.put(cleanString(a.name()), temp);
+                    cleanNameToNode.put(cleanString(a.name()), a);
+                    temp.add(a.name());
+                }
+                if (!trieSet.contains(cleanString(a.name()))) {
+                    trieSet.add(cleanString(a.name()));
+                }
+            }
+        }
+        pointSet = new WeirdPointSet(points);
     }
 
 
@@ -31,9 +60,8 @@ public class AugmentedStreetMapGraph extends StreetMapGraph {
      * @return The id of the node in the graph closest to the target.
      */
     public long closest(double lon, double lat) {
-        return 0;
+        return pointNodeHashMap.get(pointSet.nearest(lon, lat)).id();
     }
-
 
     /**
      * For Project Part III (gold points)
@@ -44,7 +72,16 @@ public class AugmentedStreetMapGraph extends StreetMapGraph {
      * cleaned <code>prefix</code>.
      */
     public List<String> getLocationsByPrefix(String prefix) {
-        return new LinkedList<>();
+        String fixed = cleanString(prefix);
+        Iterable<String> nameList = trieSet.keysWithPrefix(fixed);
+        Iterator<String> nameIterator = nameList.iterator();
+        List<String> results = new ArrayList<String> ();
+        while (nameIterator.hasNext()) {
+            for (String name : cleanNameToDirtyNames.get(nameIterator.next())) {
+                results.add(name);
+            }
+        }
+        return results;
     }
 
     /**
@@ -61,7 +98,20 @@ public class AugmentedStreetMapGraph extends StreetMapGraph {
      * "id" -> Number, The id of the node. <br>
      */
     public List<Map<String, Object>> getLocations(String locationName) {
-        return new LinkedList<>();
+        List<String> temp = getLocationsByPrefix(locationName);
+        String clean = cleanString(locationName);
+        List results = new LinkedList<Map<String, Object>>();
+        for (String a : temp) {
+            if (a.equals(clean)) {
+                Map<String, Object> map = new HashMap<String, Object>();
+                map.put("lat", stringToNodeHashMap.get(a).lat());
+                map.put("lon", stringToNodeHashMap.get(a).lon());
+                map.put("name", stringToNodeHashMap.get(a).name());
+                map.put("id", stringToNodeHashMap.get(a).id());
+                results.add(map);
+            }
+        }
+        return results;
     }
 
 

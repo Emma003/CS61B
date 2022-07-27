@@ -5,7 +5,7 @@ I implemented the back-end "smart" features of this program including rastering,
 
 Data structures and algorithms such as Heap, Trie, K-D Tree and A* search were implemented from scratch in Java to learn object-oriented programming.
 
-## shortest path and turn-by-turn directions
+## Shortest path and Turn-by-turn directions
 ![path demo](shortestpath.gif)
 
 ## Autocomplete
